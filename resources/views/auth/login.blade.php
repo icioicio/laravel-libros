@@ -43,5 +43,23 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+        <div class="flex items-center justify-end mt-4">
+    </div>
+
+<div class="text-center my-4">
+    <span class="text-gray-500">También puede</span>
+    <hr class="my-2 border-gray-300">
+</div>
+
+<div class="text-center mt-4">
+<a href="{{ route('auth.google') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-700 font-semibold text-xs uppercase tracking-widest hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+    <img class="w-4 h-4 mr-2" src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google logo"/>
+   
+
+
+ 
+        Iniciar Sesión con Google
+    </a>
+</div>
     </form>
 </x-guest-layout>

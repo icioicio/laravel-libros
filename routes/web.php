@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\Auth\SocialiteController; // ¡Añade esta línea!
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController; // ¡AÑADE ESTA LÍNEA!
@@ -47,6 +47,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('books', BookController::class);
 });
 
+
+// Rutas de Autenticación de Google con Socialite
+Route::prefix('auth')->group(function () {
+    Route::get('/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+});
+
+Route::middleware('auth')->group(function () {
+    // ... tus rutas protegidas como /dashboard, /books, /profile ...
+});
 
 // --- RUTAS DE AUTENTICACIÓN DE BREEZE ---
 // Este archivo contiene las rutas para login, register, password reset, etc.
