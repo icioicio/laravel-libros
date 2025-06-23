@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\RedirectResponse; // Agregamos esta importación
 
 class LoginRequest extends FormRequest
 {
@@ -36,10 +37,11 @@ class LoginRequest extends FormRequest
      * Attempt to authenticate the request's credentials.
      *
      * @throws \Illuminate\Validation\ValidationException
+     * @return \Illuminate\Http\RedirectResponse // Cambiamos de void a RedirectResponse
      */
-    public function authenticate(): void
+    public function authenticate(): RedirectResponse
     {
-        $this->ensureIsNotRateLimited();
+        $this->ensureIsNotRateLimited(); // Este método debería existir ahora
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
@@ -50,6 +52,9 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+
+        // ¡Esta es la línea que fuerza la redirección a /books!
+        return redirect()->intended(route('books.index'));
     }
 
     /**
