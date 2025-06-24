@@ -12,9 +12,12 @@
                     <h3 class="text-lg font-medium text-gray-900">Bienvenido al Gestor de Libros</h3>
                     <p class="mt-1 text-sm text-gray-600">Aquí podrás ver y gestionar tus libros.</p>
 
-                    <div class="mt-6">
+                    <div class="mt-6 flex items-center justify-start">
                         <a href="{{ route('books.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                             Añadir Nuevo Libro
+                        </a>
+                        <a href="#" class="ml-4 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Escanear QR (Próximamente)
                         </a>
                     </div>
 
@@ -27,7 +30,7 @@
                                             <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Título</th>
                                             <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Autor</th>
                                             <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Año</th>
-                                            <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">QR</th> <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                                 <span class="sr-only">Acciones</span>
                                             </th>
                                         </tr>
@@ -40,7 +43,13 @@
                                                     {{ $book->author->name ?? 'N/A' }}
                                                 </td>
                                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $book->publication_year }}</td>
-                                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                    {{-- Generamos el QR para este libro --}}
+                                                    {{-- El QR contendrá un enlace a la página de detalle del libro (si la tuviéramos) --}}
+                                                    {{-- O simplemente el ID del libro, o un texto. Usaremos el ID y título por simplicidad. --}}
+                                                    {!! QrCode::size(50)->generate($book->id . ' - ' . $book->title) !!}
+                                                    {{-- La etiqueta {!! !!} es para renderizar HTML sin escapar --}}
+                                                </td> <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                                     <a href="{{ route('books.edit', $book->id) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
                                                     <form action="{{ route('books.destroy', $book->id) }}" method="POST" class="inline ml-4">
                                                         @csrf
@@ -51,8 +60,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="4" class="px-3 py-4 text-sm text-gray-500 text-center">No hay libros registrados.</td>
-                                            </tr>
+                                                <td colspan="5" class="px-3 py-4 text-sm text-gray-500 text-center">No hay libros registrados.</td> </tr>
                                         @endforelse
                                     </tbody>
                                 </table>

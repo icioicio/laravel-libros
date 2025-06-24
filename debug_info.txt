@@ -1,3 +1,84 @@
+=== COMPOSER.JSON ===
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The skeleton application for the Laravel framework.",
+    "keywords": ["laravel", "framework"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0",
+        "laravel/socialite": "^5.21",
+        "laravel/tinker": "^2.10.1"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/breeze": "^2.3",
+        "laravel/pail": "^1.2.2",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.41",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "phpunit/phpunit": "^11.5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
+
+
+=== CONFIG/APP.PHP ===
 <?php
 
 return [
@@ -184,3 +265,81 @@ return [
     ],
 
 ];
+
+=== ESTRUCTURA PROYECTO ===
+total 588
+drwxr-xr-x  14 icio icio   4096 jun 23 22:51 .
+drwxr-xr-x   7 icio icio   4096 jun 22 22:29 ..
+drwxr-xr-x   6 icio icio   4096 jun 22 22:54 app
+-rwxr-xr-x   1 icio icio    425 jun 10 12:10 artisan
+drwxr-xr-x   3 icio icio   4096 jun 10 12:10 bootstrap
+-rw-rw-r--   1 icio icio   2491 jun 23 20:40 composer.json
+-rw-rw-r--   1 icio icio 316818 jun 23 20:41 composer.lock
+drwxr-xr-x   2 icio icio   4096 jun 23 20:40 config
+drwxr-xr-x   5 icio icio   4096 jun 22 22:29 database
+-rw-rw-r--   1 icio icio   9889 jun 23 22:51 debug_info.txt
+-rw-r--r--   1 icio icio    258 jun 10 12:10 .editorconfig
+-rw-r--r--   1 icio icio   1347 jun 23 18:44 .env
+-rw-r--r--   1 icio icio   1084 jun 10 12:10 .env.example
+drwxrwxr-x   8 icio icio   4096 jun 23 20:41 .git
+-rw-r--r--   1 icio icio    186 jun 10 12:10 .gitattributes
+-rw-r--r--   1 icio icio    283 jun 10 12:10 .gitignore
+drwxrwxr-x 172 icio icio   4096 jun 22 22:55 node_modules
+-rw-r--r--   1 icio icio    549 jun 22 22:54 package.json
+-rw-rw-r--   1 icio icio 157492 jun 22 22:55 package-lock.json
+-rw-r--r--   1 icio icio   1173 jun 10 12:10 phpunit.xml
+-rw-rw-r--   1 icio icio     93 jun 22 22:54 postcss.config.js
+drwxr-xr-x   3 icio icio   4096 jun 23 01:29 public
+-rw-r--r--   1 icio icio   3929 jun 10 12:10 README.md
+drwxr-xr-x   5 icio icio   4096 jun 10 12:10 resources
+drwxr-xr-x   2 icio icio   4096 jun 23 20:40 routes
+drwxrwxr-x   5 icio icio   4096 jun 10 12:10 storage
+-rw-rw-r--   1 icio icio    541 jun 22 22:54 tailwind.config.js
+drwxr-xr-x   4 icio icio   4096 jun 10 12:10 tests
+drwxrwxr-x  43 icio icio   4096 jun 23 20:42 vendor
+-rw-r--r--   1 icio icio    263 jun 22 22:54 vite.config.js
+
+
+=== VENDOR INSTALADO ===
+autoload.php
+bin
+brick
+carbonphp
+composer
+dflydev
+doctrine
+dragonmantank
+egulias
+fakerphp
+filp
+firebase
+fruitcake
+graham-campbell
+guzzlehttp
+hamcrest
+laravel
+league
+mockery
+monolog
+myclabs
+nesbot
+nette
+nikic
+nunomaduro
+paragonie
+phar-io
+phpoption
+phpseclib
+phpunit
+psr
+psy
+ralouphie
+ramsey
+sebastian
+staabm
+symfony
+theseer
+tijsverkoyen
+vlucas
+voku
+webmozart
