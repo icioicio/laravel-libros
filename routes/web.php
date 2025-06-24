@@ -57,7 +57,15 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     // ... tus rutas protegidas como /dashboard, /books, /profile ...
 });
+// 🛣️ RUTAS PARA QR CODES MEJORADOS
 
+// Ruta para mostrar QR en pantalla
+// GET /books/1/qr -> llama al método generateQr() con id=1
+Route::get('/books/{id}/qr', [BookController::class, 'generateQr'])->name('books.qr');
+
+// Ruta para descargar QR como archivo
+// GET /books/1/qr/download -> llama al método downloadQr() con id=1
+Route::get('/books/{id}/qr/download', [BookController::class, 'downloadQr'])->name('books.qr.download');
 // --- RUTAS DE AUTENTICACIÓN DE BREEZE ---
 // Este archivo contiene las rutas para login, register, password reset, etc.
 // Es crucial que esta línea esté al final para que las rutas de Breeze se carguen correctamente.

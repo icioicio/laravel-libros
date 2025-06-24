@@ -47,7 +47,12 @@
                                                     {{-- Generamos el QR para este libro --}}
                                                     {{-- El QR contendrá un enlace a la página de detalle del libro (si la tuviéramos) --}}
                                                     {{-- O simplemente el ID del libro, o un texto. Usaremos el ID y título por simplicidad. --}}
-                                                    {!! QrCode::size(50)->generate($book->id . ' - ' . $book->title) !!}
+                                                    {!! QrCode::size(80)
+          ->backgroundColor(255,255,255)
+          ->color(0,0,0)
+          ->margin(1)
+          ->generate("LIBRO: {$book->title}\n AUTOR: {$book->author->name}\n AÑO: " . ($book->publication_year ?? 'N/A') . "\n VER: " . route('books.show', $book->id)) !!}
+
                                                     {{-- La etiqueta {!! !!} es para renderizar HTML sin escapar --}}
                                                 </td> <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                                     <a href="{{ route('books.edit', $book->id) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
