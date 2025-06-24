@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Book; // Importa el modelo Book
 use App\Models\Author; // Importa el modelo Author
 use Illuminate\Http\Request; // Importa la clase Request
+
 
 class BookController extends Controller
 {
@@ -28,81 +29,50 @@ public function show(Book $book)
     // compact() = convierte $book en ['book' => $book] para la vista
     return view('books.show', compact('book'));
 }
-    /**
- * Descarga un QR code como imagen PNG.
- * 
- * ¿Qué hace este método?
- * - Similar al anterior, pero genera un archivo PNG para descargar
- * - El QR es más grande (400px) para mejor calidad
- * - Fuerza la descarga del archivo
- */
+
 public function downloadQr($id)
 {
-    // 🔍 BUSCAR EL LIBRO (igual que antes)
     $book = Book::with('author')->findOrFail($id);
     
-    // 📝 CREAR EL CONTENIDO DEL QR (igual que antes)
-    $qrContent = "📚 LIBRO: {$book->title}\n";
-    $qrContent .= "✍️ AUTOR: {$book->author->name}\n";
-    $qrContent .= "📅 AÑO: " . ($book->publication_year ?? 'N/A') . "\n";
-    $qrContent .= "🔗 VER MÁS: " . route('books.show', $book->id);
+    // Contenido sin caracteres especiales
+    $qrContent = "LIBRO: " . $book->title . "\n";
+    $qrContent .= "AUTOR: " . $book->author->name . "\n";
+    $qrContent .= "ANO: " . ($book->publication_year ?? 'N/A') . "\n";
+    $qrContent .= "URL: " . route('books.show', $book->id);
     
-    // 🎨 GENERAR QR MÁS GRANDE PARA DESCARGA
-    $qrCode = QrCode::format('png')                // Formato PNG (no SVG)
-                   ->size(400)                     // Más grande: 400x400 píxeles
-                   ->backgroundColor(255, 255, 255) // Fondo blanco
-                   ->color(0, 0, 0)                // Color negro
-                   ->margin(3)                     // Margen más grande
-                   ->generate($qrContent);         // Generar el QR
+    $qrCode = QrCode::size(500)
+                   ->backgroundColor(255, 255, 255)
+                   ->color(0, 0, 0)
+                   ->margin(3)
+                   ->encoding('UTF-8')
+                   ->generate($qrContent);
     
-    // 📁 CREAR NOMBRE DEL ARCHIVO
-    // str_replace() = reemplaza espacios por guiones bajos
-    $fileName = 'QR_' . str_replace(' ', '_', $book->title) . '.png';
+    $fileName = 'QR_' . str_replace([' ', 'ñ', 'á', 'é', 'í', 'ó', 'ú'], ['_', 'n', 'a', 'e', 'i', 'o', 'u'], $book->title) . '.svg';
     
-    // 📤 FORZAR DESCARGA DEL ARCHIVO
     return response($qrCode)
-        ->header('Content-Type', 'image/png')                           // Tipo: imagen PNG
-        ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"'); // Forzar descarga
+        ->header('Content-Type', 'image/svg+xml')
+        ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
 }
-    /**
+/**
  * Genera un QR code mejorado para un libro específico.
- * 
- * ¿Qué hace este método?
- * - Recibe el ID de un libro
- * - Busca el libro en la base de datos
- * - Crea un texto con información del libro y autor
- * - Genera un código QR con esa información
- * - Devuelve el QR como imagen SVG
  */
 public function generateQr($id)
 {
-    // 🔍 BUSCAR EL LIBRO EN LA BASE DE DATOS
-    // Book::with('author') = Busca el libro Y también carga la información del autor
-    // findOrFail($id) = Busca por ID, si no existe lanza error 404
     $book = Book::with('author')->findOrFail($id);
     
-    // 📝 CREAR EL TEXTO QUE IRÁ DENTRO DEL QR
-    // Usamos concatenación (.) para unir strings
-    // \n = salto de línea (nueva línea)
-    $qrContent = "📚 LIBRO: {$book->title}\n";           // Título del libro
-    $qrContent .= "✍️ AUTOR: {$book->author->name}\n";   // Nombre del autor
+    // Contenido simplificado sin caracteres especiales
+    $qrContent = "LIBRO: " . $book->title . "\n";
+    $qrContent .= "AUTOR: " . $book->author->name . "\n";
+    $qrContent .= "ANO: " . ($book->publication_year ?? 'N/A') . "\n";
+    $qrContent .= "URL: " . route('books.show', $book->id);
     
-    // Operador ternario: condición ? valor_si_true : valor_si_false
-    $qrContent .= "📅 AÑO: " . ($book->publication_year ?? 'N/A') . "\n";
+    $qrCode = QrCode::size(400)
+                   ->backgroundColor(255, 255, 255)
+                   ->color(0, 0, 0)
+                   ->margin(2)
+                   ->encoding('UTF-8')
+                   ->generate($qrContent);
     
-    // route() = genera la URL completa para ver el libro
-    $qrContent .= "🔗 VER MÁS: " . route('books.show', $book->id);
-    
-    // 🎨 GENERAR EL CÓDIGO QR
-    $qrCode = QrCode::size(200)                    // Tamaño 200x200 píxeles
-                   ->backgroundColor(255, 255, 255) // Fondo blanco (RGB)
-                   ->color(0, 0, 0)                 // Color negro para el QR (RGB)
-                   ->margin(2)                      // Margen alrededor del QR
-                   ->generate($qrContent);          // Genera el QR con nuestro texto
-    
-    // 📤 DEVOLVER LA RESPUESTA
-    // response() = crea una respuesta HTTP
-    // header() = establece el tipo de contenido como imagen SVG
     return response($qrCode)->header('Content-Type', 'image/svg+xml');
 }
 /**
