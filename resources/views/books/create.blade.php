@@ -11,6 +11,42 @@
                 <div class="p-6 text-gray-900">
                     <form action="{{ route('books.store') }}" method="POST">
                         @csrf
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+<div id="reader" style="width: 300px"></div>
+<input type="text" id="isbn" name="isbn" placeholder="Escanea ISBN">
+
+<script>
+  function onScanSuccess(decodedText, decodedResult) {
+      document.getElementById("isbn").value = decodedText;
+      html5QrcodeScanner.clear();
+      // Opcional: hacer una llamada AJAX para autocompletar los datos del libro
+  }
+
+  const html5QrcodeScanner = new Html5QrcodeScanner(
+    "reader", { fps: 10, qrbox: 250 });
+  html5QrcodeScanner.render(onScanSuccess);
+</script>
+<script>
+function onScanSuccess(decodedText, decodedResult) {
+    document.getElementById("isbn").value = decodedText;
+
+    fetch(`/api/isbn/${decodedText}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.error) {
+                document.getElementById("titulo").value = data.titulo;
+                document.getElementById("autor").value = data.autores;
+                document.getElementById("editorial").value = data.editorial;
+                document.getElementById("fecha").value = data.fecha;
+            } else {
+                alert("Libro no encontrado");
+            }
+        });
+
+    html5QrcodeScanner.clear();
+}
+</script>
 
                         <div>
                             <label for="title" class="block font-medium text-sm text-gray-700">Título</label>
