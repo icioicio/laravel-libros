@@ -9,6 +9,30 @@ use Illuminate\Http\Request; // Importa la clase Request
 
 class BookController extends Controller
 {
+
+ public function buscarPorIsbn($isbn)
+{
+    $response = Http::get("https://openlibrary.org/api/books", [
+        'bibkeys' => 'ISBN:' . $isbn,
+        'format' => 'json',
+        'jscmd' => 'data',
+    ]);
+
+    $data = $response->json();
+    $book = $data['ISBN:' . $isbn] ?? null;
+
+    if (!$book) {
+        return response()->json(['error' => 'Libro no encontrado'], 404);
+    }
+
+    return response()->json([
+        'titulo' => $book['title'] ?? '',
+        'autores' => collect($book['authors'] ?? [])->pluck('name')->join(', '),
+        'editorial' => $book['publishers'][0]['name'] ?? '',
+        'fecha' => $book['publish_date'] ?? '',
+    ]);
+}
+   
     /**
  * Muestra los detalles de un libro específico.
  * 

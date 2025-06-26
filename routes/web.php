@@ -16,6 +16,7 @@ use App\Http\Controllers\BookController; // ¡AÑADE ESTA LÍNEA!
 */
 
 // --- RUTAS PÚBLICAS (Sin autenticación) ---
+Route::get('/api/isbn/{isbn}', [App\Http\Controllers\LibroController::class, 'buscarPorIsbn']);
 
 // Ruta raíz (página de bienvenida de Laravel)
 Route::get('/', function () {
